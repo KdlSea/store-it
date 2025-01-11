@@ -5,29 +5,23 @@ import { cookies } from "next/headers";
 import { handleError } from "@/lib/actions/user.action";
 
 export const createSessionClient = async () => {
-  try {
-    const session = (await cookies()).get("appwrite-sessions");
-    if (session) {
-      const client = new Client()
-        .setEndpoint(appwriteConfig.endpointUrl)
-        .setProject(appwriteConfig.projectId);
+  const client = new Client()
+    .setEndpoint(appwriteConfig.endpointUrl)
+    .setProject(appwriteConfig.projectId);
 
-      // if (!session || !session.value) handleError(error, "Could not find session");
+  const session = (await cookies()).get("appwrite-sessions");
+  if (!session || !session.value) throw new Error("Could not find session");
 
-      client.setSession(session.value);
+  client.setSession(session.value);
 
-      return {
-        get account() {
-          return new Account(client);
-        },
-        get database() {
-          return new Databases(client);
-        },
-      };
-    }
-  } catch (error) {
-    handleError(error, "No session");
-  }
+  return {
+    get account() {
+      return new Account(client);
+    },
+    get database() {
+      return new Databases(client);
+    },
+  };
 };
 
 export const createAdminClient = async () => {
