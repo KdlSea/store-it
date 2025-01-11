@@ -3,10 +3,8 @@ import { ID, Query } from "node-appwrite";
 import { createAdminClient, createSessionClient } from "@/lib/appwrite";
 import { appwriteConfig } from "@/lib/appwrite/config";
 import { parseStringify } from "@/lib/utils";
-import { string } from "zod";
 import { cookies } from "next/headers";
 import { avatarUrl } from "@/constant";
-import { error } from "next/dist/build/output/log";
 import { redirect } from "next/navigation";
 
 const getUserByEmail = async (email: string) => {

@@ -6,7 +6,6 @@ import { appwriteConfig } from "@/lib/appwrite/config";
 import { ID, Models, Query } from "node-appwrite";
 import { constructFileUrl, getFileType, parseStringify } from "@/lib/utils";
 import { revalidatePath } from "next/cache";
-import { number } from "zod";
 
 export const uploadFile = async ({
   file,

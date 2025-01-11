@@ -1,6 +1,5 @@
 import Image from "next/image";
 import { cn, getFileIcon } from "@/lib/utils";
-import { className } from "postcss-selector-parser";
 
 interface Props {
   type: string;

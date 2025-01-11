@@ -1,10 +1,9 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
-import { avatarUrl, navItems } from "@/constant";
+import { navItems } from "@/constant";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { getCurrentUser } from "@/lib/actions/user.action";
 
 interface Props {
   fullName: string;
