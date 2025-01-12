@@ -1,5 +1,5 @@
 "use server";
-import { ID, Query } from "node-appwrite";
+import { Account, Client, ID, Query } from "node-appwrite";
 import { createAdminClient, createSessionClient } from "@/lib/appwrite";
 import { appwriteConfig } from "@/lib/appwrite/config";
 import { parseStringify } from "@/lib/utils";
@@ -14,7 +14,6 @@ const getUserByEmail = async (email: string) => {
     appwriteConfig.userCollectionId,
     [Query.equal("email", [email])],
   );
-  console.log("======== total result :", result.total);
   return result.total > 0 ? result.documents[0] : null;
 };
 
@@ -32,6 +31,21 @@ export const sendEmailOTP = async ({ email }: { email: string }) => {
   }
 };
 
+export const preCreateTestAccount = async () => {
+  try {
+    const { account } = await createAdminClient();
+    const testUser = await account.create(
+      "testUserExampleEmail", // Static account ID
+      "user@example.com", // Email
+      "use server", // Password
+      "Test User", // Name
+    );
+    console.log("Test user created:", testUser);
+  } catch (error) {
+    handleError(error, "Failed to pre create test account");
+  }
+};
+
 export const createAccount = async ({
   fullName,
   email,
@@ -40,9 +54,7 @@ export const createAccount = async ({
   email: string;
 }) => {
   const existingUser = await getUserByEmail(email);
-  // console.log("=============== existing user", existingUser);
   const accountId = await sendEmailOTP({ email });
-  console.log("=============== accountId", accountId);
   if (!accountId) throw new Error("failed to send Email OTP");
 
   if (!existingUser) {
@@ -58,10 +70,8 @@ export const createAccount = async ({
         accountId,
       },
     );
-    console.log("================ create document ", result);
   }
 
-  console.log("================ accountId After ", accountId);
   return parseStringify({ accountId });
 };
 
@@ -74,7 +84,6 @@ export const verifySecret = async ({
 }) => {
   try {
     const { account } = await createAdminClient();
-
     const session = await account.createSession(accountId, password);
     (await cookies()).set("appwrite-sessions", session.secret, {
       path: "/",
@@ -121,7 +130,6 @@ export const signOutUser = async () => {
 export const signInUser = async ({ email }: { email: string }) => {
   try {
     const existingUser = await getUserByEmail(email);
-    console.log("========== existing user", existingUser);
     if (existingUser) {
       await sendEmailOTP({ email });
       return parseStringify({ accountId: existingUser.accountId });

@@ -16,7 +16,11 @@ import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { createAccount, signInUser } from "@/lib/actions/user.action";
+import {
+  anonymUser,
+  createAccount,
+  signInUser,
+} from "@/lib/actions/user.action";
 import OtpModal from "@/components/otp-modal";
 
 type Formtype = "signin" | "signup";
@@ -55,7 +59,6 @@ const AuthForm = ({ type }: { type: Formtype }) => {
               email: values.email || "",
             })
           : await signInUser({ email: values.email });
-
       setAccountId(user.accountId);
     } catch {
       seterrorMessage("Failed to create account");
